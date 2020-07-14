@@ -1,151 +1,184 @@
 #include "pch.h"
+#include "DeviceResources.h"
+#include "Main.h"
+#include <ppltasks.h>	// For create_task
 
-using namespace winrt;
+using winrt::Windows::ApplicationModel::SuspendingDeferral;
+using winrt::Windows::ApplicationModel::SuspendingEventArgs;
+using winrt::Windows::ApplicationModel::Activation::IActivatedEventArgs;
+using winrt::Windows::ApplicationModel::Core::CoreApplication;
+using winrt::Windows::ApplicationModel::Core::CoreApplicationView;
+using winrt::Windows::ApplicationModel::Core::IFrameworkView;
+using winrt::Windows::ApplicationModel::Core::IFrameworkViewSource;
+using winrt::Windows::Graphics::Display::DisplayInformation;
+using winrt::Windows::UI::Core::CoreCursor;
+using winrt::Windows::UI::Core::CoreCursorType;
+using winrt::Windows::UI::Core::CoreDispatcher;
+using winrt::Windows::UI::Core::CoreProcessEventsOption;
+using winrt::Windows::UI::Core::CoreWindow;
+using winrt::Windows::UI::Core::CoreWindowEventArgs;
+using winrt::Windows::UI::Core::PointerEventArgs;
+using winrt::Windows::UI::Core::VisibilityChangedEventArgs;
+using winrt::Windows::UI::Core::WindowActivatedEventArgs;
+using winrt::Windows::UI::Core::WindowSizeChangedEventArgs;
 
-using namespace Windows;
-using namespace Windows::ApplicationModel::Core;
-using namespace Windows::Foundation::Numerics;
-using namespace Windows::UI;
-using namespace Windows::UI::Core;
-using namespace Windows::UI::Composition;
-
-struct App : implements<App, IFrameworkViewSource, IFrameworkView>
+WINRT_EXPORT namespace MeshRendering
 {
-    CompositionTarget m_target{ nullptr };
-    VisualCollection m_visuals{ nullptr };
-    Visual m_selected{ nullptr };
-    float2 m_offset{};
-
-    IFrameworkView CreateView()
+    struct App : winrt::implements<App, IFrameworkViewSource, IFrameworkView>
     {
-        return *this;
-    }
-
-    void Initialize(CoreApplicationView const &)
-    {
-    }
-
-    void Load(hstring const&)
-    {
-    }
-
-    void Uninitialize()
-    {
-    }
-
-    void Run()
-    {
-        CoreWindow window = CoreWindow::GetForCurrentThread();
-        window.Activate();
-
-        CoreDispatcher dispatcher = window.Dispatcher();
-        dispatcher.ProcessEvents(CoreProcessEventsOption::ProcessUntilQuit);
-    }
-
-    void SetWindow(CoreWindow const & window)
-    {
-        Compositor compositor;
-        ContainerVisual root = compositor.CreateContainerVisual();
-        m_target = compositor.CreateTargetForCurrentView();
-        m_target.Root(root);
-        m_visuals = root.Children();
-
-        window.PointerPressed({ this, &App::OnPointerPressed });
-        window.PointerMoved({ this, &App::OnPointerMoved });
-
-        window.PointerReleased([&](auto && ...)
+        IFrameworkView CreateView()
         {
-            m_selected = nullptr;
-        });
-    }
+            return *this;
+        }
 
-    void OnPointerPressed(IInspectable const &, PointerEventArgs const & args)
-    {
-        float2 const point = args.CurrentPoint().Position();
-
-        for (Visual visual : m_visuals)
+        // The first method called when the IFrameworkView is being created.
+        void Initialize(CoreApplicationView const& applicationView)
         {
-            float3 const offset = visual.Offset();
-            float2 const size = visual.Size();
+            // Register event handlers for app lifecycle. This example includes Activated, so that we
+            // can make the CoreWindow active and start rendering on the window.
+            applicationView.Activated({ this, &App::OnActivated });
 
-            if (point.x >= offset.x &&
-                point.x < offset.x + size.x &&
-                point.y >= offset.y &&
-                point.y < offset.y + size.y)
+            CoreApplication::Suspending({ this, &App::OnSuspending });
+            CoreApplication::Resuming({ this, &App::OnResuming });
+
+            // At this point we have access to the device. 
+            // We can create the device-dependent resources.
+            m_deviceResources = std::make_shared<DX::DeviceResources>();
+        }
+
+        // Initializes scene resources, or loads a previously saved app state.
+        void Load(winrt::hstring const&)
+        {
+            if (m_main == nullptr)
             {
-                m_selected = visual;
-                m_offset.x = offset.x - point.x;
-                m_offset.y = offset.y - point.y;
+                m_main = std::unique_ptr<MeshRendering::Main>(new MeshRendering::Main(m_deviceResources));
             }
         }
 
-        if (m_selected)
+        // Required for IFrameworkView.
+        // Terminate events do not cause Uninitialize to be called. It will be called if your IFrameworkView
+        // class is torn down while the app is in the foreground.
+        void Uninitialize()
         {
-            m_visuals.Remove(m_selected);
-            m_visuals.InsertAtTop(m_selected);
         }
-        else
+
+        // Called when the CoreWindow object is created (or re-created).
+        void SetWindow(CoreWindow const& window)
         {
-            AddVisual(point);
+            window.PointerCursor(CoreCursor(CoreCursorType::Arrow, 0));
+
+            window.Activated({ this, &App::OnWindowActivationChanged });
+            window.SizeChanged({ this, &App::OnWindowSizeChanged });
+            window.VisibilityChanged({ this, &App::OnVisibilityChanged });
+            window.Closed({ this, &App::OnWindowClosed });
+
+            DisplayInformation displayInformation = DisplayInformation::GetForCurrentView();
+
+            displayInformation.DpiChanged({ this, &App::OnDpiChanged });
+            displayInformation.StereoEnabledChanged({ this, &App::OnStereoEnabledChanged });
+            displayInformation.OrientationChanged({ this, &App::OnOrientationChanged });
+
+            DisplayInformation::DisplayContentsInvalidated({ this, &App::OnDisplayContentsInvalidated });
+
+            // At this point we have access to the device. 
+            // We can create the device-dependent resources.
+            // m_deviceResources = std::make_shared<DX::DeviceResources>();
+            m_deviceResources->SetWindow(CoreWindow::GetForCurrentThread());
         }
-    }
 
-    void OnPointerMoved(IInspectable const &, PointerEventArgs const & args)
-    {
-        if (m_selected)
+        void Run()
         {
-            float2 const point = args.CurrentPoint().Position();
-
-            m_selected.Offset(
-            {
-                point.x + m_offset.x,
-                point.y + m_offset.y,
-                0.0f
-            });
+            m_main->Run();
         }
-    }
 
-    void AddVisual(float2 const point)
-    {
-        Compositor compositor = m_visuals.Compositor();
-        SpriteVisual visual = compositor.CreateSpriteVisual();
+        // =============================================================================
+        // Application lifecycle event handlers.
 
-        static Color colors[] =
+        void OnActivated(CoreApplicationView, IActivatedEventArgs const&)
         {
-            { 0xDC, 0x5B, 0x9B, 0xD5 },
-            { 0xDC, 0xED, 0x7D, 0x31 },
-            { 0xDC, 0x70, 0xAD, 0x47 },
-            { 0xDC, 0xFF, 0xC0, 0x00 }
-        };
-
-        static unsigned last = 0;
-        unsigned const next = ++last % _countof(colors);
-        visual.Brush(compositor.CreateColorBrush(colors[next]));
-
-        float const BlockSize = 100.0f;
-
-        visual.Size(
+            // Run() won't start until the CoreWindow is activated.
+            CoreWindow::GetForCurrentThread().Activate();
+        }
+        void OnSuspending(IInspectable const&, SuspendingEventArgs args)
         {
-            BlockSize,
-            BlockSize
-        });
+            // Save app state asynchronously after requesting a deferral. Holding a deferral
+            // indicates that the application is busy performing suspending operations. Be
+            // aware that a deferral may not be held indefinitely. After about five seconds,
+            // the app will be forced to exit.
+            SuspendingDeferral deferral = args.SuspendingOperation().GetDeferral();
 
-        visual.Offset(
+            concurrency::create_task([this, deferral]()
+                {
+                    m_deviceResources->Trim();
+
+                    m_main->Suspend();
+
+                    deferral.Complete();
+                });
+        }
+        void OnResuming(IInspectable const&, IInspectable const&)
         {
-            point.x - BlockSize / 2.0f,
-            point.y - BlockSize / 2.0f,
-            0.0f,
-        });
+            // Restore any data or state that was unloaded on suspend. By default, data
+            // and state are persisted when resuming from suspend. Note that this event
+            // does not occur if the app was previously terminated.  
+            m_main->Resume();
+        }
 
-        m_visuals.InsertAtTop(visual);
+        // Window event handlers.
 
-        m_selected = visual;
-        m_offset.x = -BlockSize / 2.0f;
-        m_offset.y = -BlockSize / 2.0f;
-    }
-};
+        void OnWindowActivationChanged(CoreWindow, WindowActivatedEventArgs e)
+        {
+            m_main->WindowActivationChanged(e.WindowActivationState());
+        }
+        void OnWindowSizeChanged(CoreWindow sender, WindowSizeChangedEventArgs)
+        {
+            m_deviceResources->SetLogicalSize(Size(sender.Bounds().Width, sender.Bounds().Height));
+            m_main->CreateWindowSizeDependentResources();
+        }
+        void OnVisibilityChanged(CoreWindow, VisibilityChangedEventArgs args)
+        {
+            m_main->Visibility(args.Visible());
+            //m_windowVisible = args.Visible();
+        }
+        void OnWindowClosed(CoreWindow, CoreWindowEventArgs)
+        {
+            m_main->Close();
+        }
+
+        // DisplayInformation event handlers.
+
+        void OnDpiChanged(DisplayInformation sender, IInspectable const&)
+        {
+            // Note: The value for LogicalDpi retrieved here may not match the effective DPI of the app
+            // if it is being scaled for high resolution devices. Once the DPI is set on DeviceResources,
+            // you should always retrieve it using the GetDpi method.
+            // See DeviceResources.cpp for more details.
+            m_deviceResources->SetDpi(sender.LogicalDpi());
+            m_main->CreateWindowSizeDependentResources();
+        }
+        void OnStereoEnabledChanged(DisplayInformation sender, IInspectable const&)
+        {
+            m_deviceResources->UpdateStereoState();
+            m_main->CreateWindowSizeDependentResources();
+        }
+        void OnOrientationChanged(DisplayInformation sender, IInspectable const&)
+        {
+            m_deviceResources->SetCurrentOrientation(sender.CurrentOrientation());
+            m_main->CreateWindowSizeDependentResources();
+        }
+        void OnDisplayContentsInvalidated(DisplayInformation, IInspectable const&)
+        {
+            m_deviceResources->ValidateDevice();
+        }
+
+
+    private:
+        std::shared_ptr<DX::DeviceResources> m_deviceResources;
+        std::unique_ptr<MeshRendering::Main> m_main;
+    };
+}
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
 {
-    CoreApplication::Run(make<App>());
+    CoreApplication::Run(winrt::make<MeshRendering::App>());
 }
