@@ -401,6 +401,25 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 
 	m_d3dContext->RSSetViewports(1, &m_screenViewport);
 
+	// Set the rasterizer state
+	D3D11_RASTERIZER_DESC1 rasterizerStateDesc;
+	rasterizerStateDesc.FillMode = D3D11_FILL_SOLID;
+	rasterizerStateDesc.CullMode = D3D11_CULL_FRONT;
+	rasterizerStateDesc.FrontCounterClockwise = true;
+	rasterizerStateDesc.DepthBias = false;
+	rasterizerStateDesc.DepthBiasClamp = 0;
+	rasterizerStateDesc.SlopeScaledDepthBias = 0;
+	rasterizerStateDesc.DepthClipEnable = true;
+	rasterizerStateDesc.ScissorEnable = false;
+	rasterizerStateDesc.MultisampleEnable = false;
+	rasterizerStateDesc.AntialiasedLineEnable = false;
+	rasterizerStateDesc.ForcedSampleCount = 0;
+
+	winrt::com_ptr<ID3D11RasterizerState1> pRasterizerState;
+	m_d3dDevice->CreateRasterizerState1(&rasterizerStateDesc, pRasterizerState.put());
+	m_d3dContext->RSSetState(pRasterizerState.get());
+
+
 	// Create a Direct2D target bitmap associated with the
 	// swap chain back buffer and set it as the current target.
 	D2D1_BITMAP_PROPERTIES1 bitmapProperties =

@@ -178,7 +178,8 @@ namespace DirectX
 		);
 	}
 
-	void Sample3DSceneRenderer::LoadVertexShader(const std::vector<byte>& fileData) {
+	void Sample3DSceneRenderer::LoadVertexShader(const std::vector<byte>& fileData) 
+	{
 		DX::ThrowIfFailed(
 			m_deviceResources->GetD3DDevice()->CreateVertexShader(
 				&fileData[0],
