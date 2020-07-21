@@ -267,7 +267,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 		swapChainDesc.Stereo = false;
 		swapChainDesc.SampleDesc.Count = 1;								// Don't use multi-sampling.
 		swapChainDesc.SampleDesc.Quality = 0;
-		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;	// Use the buffer as a render target output
 		swapChainDesc.BufferCount = 2;									// Use double-buffering to minimize latency.
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;	// All Windows Store apps must use this SwapEffect.
 		swapChainDesc.Flags = 0;
@@ -352,26 +352,31 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 	// Create a render target view of the swap chain back buffer.
 	winrt::com_ptr<ID3D11Texture2D1> backBuffer;
 	DX::ThrowIfFailed(
-		m_swapChain->GetBuffer(0, IID_PPV_ARGS(backBuffer.put()))
+		m_swapChain->GetBuffer(0, IID_PPV_ARGS(backBuffer.put()))	// Get a pointer to the swap chain back buffer (the buffer at index 0)
 	);
 
 	DX::ThrowIfFailed(
 		m_d3dDevice->CreateRenderTargetView1(
-			backBuffer.get(),
-			nullptr,
-			m_d3dRenderTargetView.put()
+			backBuffer.get(),			// Pointer to resource that represents a render target
+			nullptr,					// Render Target View Description - nullptr means create a view that access all of the subresources in mipmap level 0
+			m_d3dRenderTargetView.put() // Pointer to memory block that will receive a pointer to ID3D11RenderTargetView1 interface
 		)
 	);
 
 	// Create a depth stencil view for use with 3D rendering if needed.
-	CD3D11_TEXTURE2D_DESC1 depthStencilDesc(
-		DXGI_FORMAT_D24_UNORM_S8_UINT,
-		lround(m_d3dRenderTargetSize.Width),
-		lround(m_d3dRenderTargetSize.Height),
-		1, // This depth stencil view has only one texture.
-		1, // Use a single mipmap level.
-		D3D11_BIND_DEPTH_STENCIL
-	);
+	CD3D11_TEXTURE2D_DESC1 depthStencilDesc;
+	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;			//
+	depthStencilDesc.Width = lround(m_d3dRenderTargetSize.Width);		// Match the size of the window.
+	depthStencilDesc.Height = lround(m_d3dRenderTargetSize.Height);
+	depthStencilDesc.ArraySize = 1;										// This depth stencil view has only one texture.
+	depthStencilDesc.MipLevels = 1;										// Use a single mipmap level.
+	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;				//
+	depthStencilDesc.SampleDesc.Count = 1;								//
+	depthStencilDesc.SampleDesc.Quality = 0;							//
+	depthStencilDesc.MiscFlags = 0;										//
+	depthStencilDesc.CPUAccessFlags = 0;								//
+	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;						//
+	depthStencilDesc.TextureLayout = D3D11_TEXTURE_LAYOUT_UNDEFINED;	//
 
 	winrt::com_ptr<ID3D11Texture2D1> depthStencil;
 	DX::ThrowIfFailed(
