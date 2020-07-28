@@ -107,8 +107,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AppLayout.h" />
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="RectangularControl.h" />
     <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="DirectXHelper.h" />
+    <ClInclude Include="Control.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="MoveLookController.h" />
     <ClInclude Include="pch.h" />
@@ -133,7 +137,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="AppLayout.cpp" />
+    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="RectangularControl.cpp" />
     <ClCompile Include="DeviceResources.cpp" />
+    <ClCompile Include="Control.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MoveLookController.cpp" />
     <ClCompile Include="pch.cpp">

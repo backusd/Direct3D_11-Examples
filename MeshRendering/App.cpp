@@ -3,6 +3,11 @@
 #include "Main.h"
 #include <ppltasks.h>	// For create_task
 
+// ---------------------------------------------------------
+#include "RectangularControl.h"
+#include "AppLayout.h"
+// ---------------------------------------------------------
+
 using winrt::Windows::ApplicationModel::SuspendingDeferral;
 using winrt::Windows::ApplicationModel::SuspendingEventArgs;
 using winrt::Windows::ApplicationModel::Activation::IActivatedEventArgs;
@@ -44,6 +49,30 @@ WINRT_EXPORT namespace MeshRendering
             // At this point we have access to the device. 
             // We can create the device-dependent resources.
             m_deviceResources = std::make_shared<DX::DeviceResources>();
+
+
+
+
+
+            // ---------------------------------------------------------
+            m_appLayout = std::make_shared<UI::AppLayout>();
+
+            m_rectControl = std::make_shared<UI::RectangularControl>(
+                m_appLayout,
+                0.0f,
+                0.0f,
+                100.0f,
+                100.0f,
+                UI::HeightWidthType::FIXED_PIXELS,
+                UI::HeightWidthType::FIXED_PIXELS);
+            m_rectControl->MouseEntered = { this, &App::FlagMe };
+            m_rectControl->HeightInPixels();
+        }
+
+        void FlagMe()
+        {
+            //std::this_thread::sleep_for(std::chrono::seconds(10));
+            m_flag = 1;
         }
 
         // Initializes scene resources, or loads a previously saved app state.
@@ -56,7 +85,7 @@ WINRT_EXPORT namespace MeshRendering
         }
 
         // Required for IFrameworkView.
-        // Terminate events do not cause Uninitialize to be called. It will be called if your IFrameworkView
+        // Terminate events do not cause to be called. It will be called if your IFrameworkView
         // class is torn down while the app is in the foreground.
         void Uninitialize()
         {
@@ -175,6 +204,14 @@ WINRT_EXPORT namespace MeshRendering
     private:
         std::shared_ptr<DX::DeviceResources> m_deviceResources;
         std::unique_ptr<MeshRendering::Main> m_main;
+
+
+
+
+        // ---------------------------------------------------------
+        std::shared_ptr<UI::AppLayout> m_appLayout;
+        std::shared_ptr<UI::RectangularControl> m_rectControl;
+        int m_flag;
     };
 }
 

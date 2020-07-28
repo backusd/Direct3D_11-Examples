@@ -16,6 +16,18 @@
     <ClCompile Include="MoveLookController.cpp">
       <Filter>Input</Filter>
     </ClCompile>
+    <ClCompile Include="AppLayout.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Control.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="RectangularControl.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -40,6 +52,18 @@
     </ClInclude>
     <ClInclude Include="MoveLookController.h">
       <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="AppLayout.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Control.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="RectangularControl.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -80,6 +104,9 @@
     </Filter>
     <Filter Include="Input">
       <UniqueIdentifier>{be06d348-71eb-487e-b05f-f5b3e0c2b8c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{4840e039-063c-4250-8291-bd1dc632d5bb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
