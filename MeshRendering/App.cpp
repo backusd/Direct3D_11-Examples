@@ -4,7 +4,6 @@
 #include <ppltasks.h>	// For create_task
 
 // ---------------------------------------------------------
-#include "RectangularControl.h"
 #include "AppLayout.h"
 // ---------------------------------------------------------
 
@@ -55,33 +54,47 @@ WINRT_EXPORT namespace MeshRendering
 
 
             // ---------------------------------------------------------
-            m_appLayout = std::make_shared<UI::AppLayout>();
+            //m_appLayout = std::unique_ptr<UI::AppLayout>(new UI::AppLayout(m_deviceResources));
 
-            m_rectControl = std::make_shared<UI::RectangularControl>(
-                m_appLayout,
-                0.0f,
-                0.0f,
-                100.0f,
-                100.0f,
-                UI::HeightWidthType::FIXED_PIXELS,
-                UI::HeightWidthType::FIXED_PIXELS);
-            m_rectControl->MouseEntered = { this, &App::FlagMe };
-            m_rectControl->HeightInPixels();
+            /*
+            m_button = std::unique_ptr<UI::Button>(
+                new UI::Button(
+                    m_deviceResources,
+                    m_appLayout,
+                    0.0f,
+                    0.0f,
+                    100.0f,
+                    100.0f,
+                    UI::HeightWidthType::FIXED_PIXELS,
+                    UI::HeightWidthType::FIXED_PIXELS
+                )
+            );
+            m_button->MouseEntered = { this, &App::FlagMe };
+            m_button->HeightInPixels();
+            */
         }
 
         void FlagMe()
         {
             //std::this_thread::sleep_for(std::chrono::seconds(10));
-            m_flag = 1;
+            int flag = 1;
         }
 
         // Initializes scene resources, or loads a previously saved app state.
         void Load(winrt::hstring const&)
         {
+            // initialization must happen here because there must be an actual window
+            // if not, then creation of the MoveLookController event handlers will throw an error because CoreWindow::GetForCurrentThread() will return null
+            if (m_appLayout == nullptr)
+            {
+                m_appLayout = std::unique_ptr<UI::AppLayout>(new UI::AppLayout(m_deviceResources));
+            }
+            /*
             if (m_main == nullptr)
             {
                 m_main = std::unique_ptr<MeshRendering::Main>(new MeshRendering::Main(m_deviceResources));
             }
+            */
         }
 
         // Required for IFrameworkView.
@@ -117,7 +130,8 @@ WINRT_EXPORT namespace MeshRendering
 
         void Run()
         {
-            m_main->Run();
+            m_appLayout->Run();
+            //m_main->Run();
         }
 
         // =============================================================================
@@ -140,7 +154,8 @@ WINRT_EXPORT namespace MeshRendering
                 {
                     m_deviceResources->Trim();
 
-                    m_main->Suspend();
+                    m_appLayout->Suspend();
+                    //m_main->Suspend();
 
                     deferral.Complete();
                 });
@@ -149,29 +164,33 @@ WINRT_EXPORT namespace MeshRendering
         {
             // Restore any data or state that was unloaded on suspend. By default, data
             // and state are persisted when resuming from suspend. Note that this event
-            // does not occur if the app was previously terminated.  
-            m_main->Resume();
+            // does not occur if the app was previously terminated. 
+            m_appLayout->Resume();
+            //m_main->Resume();
         }
 
         // Window event handlers.
 
         void OnWindowActivationChanged(CoreWindow, WindowActivatedEventArgs e)
         {
-            m_main->WindowActivationChanged(e.WindowActivationState());
+            m_appLayout->WindowActivationChanged(e.WindowActivationState());
+            //m_main->WindowActivationChanged(e.WindowActivationState());
         }
         void OnWindowSizeChanged(CoreWindow sender, WindowSizeChangedEventArgs)
         {
             m_deviceResources->SetLogicalSize(Size(sender.Bounds().Width, sender.Bounds().Height));
-            m_main->CreateWindowSizeDependentResources();
+            m_appLayout->CreateWindowSizeDependentResources();
+            //m_main->CreateWindowSizeDependentResources();
         }
         void OnVisibilityChanged(CoreWindow, VisibilityChangedEventArgs args)
         {
-            m_main->Visibility(args.Visible());
-            //m_windowVisible = args.Visible();
+            m_appLayout->Visibility(args.Visible());
+            //m_main->Visibility(args.Visible());
         }
         void OnWindowClosed(CoreWindow, CoreWindowEventArgs)
         {
-            m_main->Close();
+            m_appLayout->Close();
+            //m_main->Close();
         }
 
         // DisplayInformation event handlers.
@@ -183,17 +202,20 @@ WINRT_EXPORT namespace MeshRendering
             // you should always retrieve it using the GetDpi method.
             // See DeviceResources.cpp for more details.
             m_deviceResources->SetDpi(sender.LogicalDpi());
-            m_main->CreateWindowSizeDependentResources();
+            m_appLayout->CreateWindowSizeDependentResources();
+            //m_main->CreateWindowSizeDependentResources();
         }
         void OnStereoEnabledChanged(DisplayInformation sender, IInspectable const&)
         {
             m_deviceResources->UpdateStereoState();
-            m_main->CreateWindowSizeDependentResources();
+            m_appLayout->CreateWindowSizeDependentResources();
+            //m_main->CreateWindowSizeDependentResources();
         }
         void OnOrientationChanged(DisplayInformation sender, IInspectable const&)
         {
             m_deviceResources->SetCurrentOrientation(sender.CurrentOrientation());
-            m_main->CreateWindowSizeDependentResources();
+            m_appLayout->CreateWindowSizeDependentResources();
+            //m_main->CreateWindowSizeDependentResources();
         }
         void OnDisplayContentsInvalidated(DisplayInformation, IInspectable const&)
         {
@@ -203,15 +225,10 @@ WINRT_EXPORT namespace MeshRendering
 
     private:
         std::shared_ptr<DX::DeviceResources> m_deviceResources;
-        std::unique_ptr<MeshRendering::Main> m_main;
-
-
-
+        //std::unique_ptr<MeshRendering::Main> m_main;
 
         // ---------------------------------------------------------
-        std::shared_ptr<UI::AppLayout> m_appLayout;
-        std::shared_ptr<UI::RectangularControl> m_rectControl;
-        int m_flag;
+        std::unique_ptr<UI::AppLayout> m_appLayout;
     };
 }
 

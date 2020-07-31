@@ -2,6 +2,11 @@
 
 namespace UI
 {
+	enum class HeightWidthType {
+		FIXED_PIXELS,	// height/width value will be fixed to the value of pixels regardless of window re-sizing
+		PERCENTAGE		// height/width value will be a percentage of total window height/width
+	};
+
 	enum MouseControlState
 	{
 		DEFAULT = 0,

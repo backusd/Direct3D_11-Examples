@@ -1,23 +1,17 @@
 #pragma once
 
 #include "Control.h"
+#include "Enums.h"
 
 using winrt::Windows::Foundation::Point;
 
-
 namespace UI
 {
-	enum class HeightWidthType {
-		FIXED_PIXELS,	// height/width value will be fixed to the value of pixels regardless of window re-sizing
-		PERCENTAGE		// height/width value will be a percentage of total window height/width
-	};
-
 	class RectangularControl : public Control
 	{
 	public:
 		// Constructors
 		RectangularControl(
-			const std::shared_ptr<UI::AppLayout> appLayout,
 			Point topLeft,
 			float height,
 			float width,
@@ -25,7 +19,6 @@ namespace UI
 			HeightWidthType widthType
 		);
 		RectangularControl(
-			const std::shared_ptr<UI::AppLayout> appLayout,
 			float top,
 			float left,
 			float height,
@@ -35,8 +28,8 @@ namespace UI
 		);
 
 		// GET Methods
-		float HeightInPixels();
-		float WidthInPixels();
+		float HeightInPixels(float windowHeight);
+		float WidthInPixels(float windowWidth);
 
 		// SET Methods
 		void TopLeft(Point topLeft);
@@ -44,9 +37,6 @@ namespace UI
 
 	private:
 		void ValidateHeightWidthValues();
-
-		// Pointer to AppLayout - required for determining overall window size
-		std::shared_ptr<UI::AppLayout> m_appLayout;
 
 		// Top Left point of the control
 		Point m_topLeft;

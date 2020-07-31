@@ -27,14 +27,16 @@ namespace MeshRendering
         bool MouseDown() const { return m_mouseDown; }
         float MousePositionX() const { return m_mousePositionX; }
 
+        void OnPointerPressed(CoreWindow, PointerEventArgs const&);
+        void OnPointerMoved(CoreWindow, PointerEventArgs const&);
+        void OnPointerReleased(CoreWindow, PointerEventArgs const&);
+
     private:
         void InitWindow(CoreWindow window);
         void ResetState();
 
 
-        void OnPointerPressed(CoreWindow, PointerEventArgs const&);
-        void OnPointerMoved(CoreWindow, PointerEventArgs const&);
-        void OnPointerReleased(CoreWindow, PointerEventArgs const&);
+
 
 
         // Pointer Variables

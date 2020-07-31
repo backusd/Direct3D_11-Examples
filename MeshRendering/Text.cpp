@@ -89,6 +89,8 @@ namespace UI
 	}
 	void Text::CreateDeviceDependentResources()
 	{
+		m_textColorBrush = nullptr;
+
 		// Create the color brush for the text color
 		DX::ThrowIfFailed(
 			m_deviceResources->GetD2DDeviceContext()->CreateSolidColorBrush(m_textColor[m_mouseControlState], m_textColorBrush.put())
@@ -129,6 +131,9 @@ namespace UI
 	}
 	void Text::Render()
 	{
+		// make sure layout/format/resources are valid before proceeding
+		Update();
+
 		ID2D1DeviceContext* context = m_deviceResources->GetD2DDeviceContext();
 		//auto logicalSize = m_deviceResources->GetLogicalSize();
 
@@ -191,7 +196,7 @@ namespace UI
 		m_textBoxPoint.y = y;
 	}
 
-	void Text::SetTextColor(D2D1::ColorF color, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetTextColor(D2D1::ColorF color, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -209,7 +214,7 @@ namespace UI
 			}
 		}
 	}
-	void Text::SetTextAlignment(DWRITE_TEXT_ALIGNMENT textAlignment, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetTextAlignment(DWRITE_TEXT_ALIGNMENT textAlignment, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -221,7 +226,7 @@ namespace UI
 			}
 		}
 	}
-	void Text::SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -234,7 +239,7 @@ namespace UI
 		}
 	}
 
-	void Text::SetFontSize(float fontSize, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetFontSize(float fontSize, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -246,7 +251,7 @@ namespace UI
 			}
 		}
 	}
-	void Text::SetFontStretch(DWRITE_FONT_STRETCH fontStretch, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetFontStretch(DWRITE_FONT_STRETCH fontStretch, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -258,7 +263,7 @@ namespace UI
 			}
 		}
 	}
-	void Text::SetFontStyle(DWRITE_FONT_STYLE fontStyle, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetFontStyle(DWRITE_FONT_STYLE fontStyle, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -270,7 +275,7 @@ namespace UI
 			}
 		}
 	}
-	void Text::SetFontWeight(DWRITE_FONT_WEIGHT fontWeight, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetFontWeight(DWRITE_FONT_WEIGHT fontWeight, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -283,7 +288,7 @@ namespace UI
 		}
 	}
 
-	void Text::SetMaxWidth(float maxWidth, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetMaxWidth(float maxWidth, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -295,7 +300,7 @@ namespace UI
 			}
 		}
 	}
-	void Text::SetMaxHeight(float maxHeight, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetMaxHeight(float maxHeight, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -308,7 +313,7 @@ namespace UI
 		}
 	}
 
-	void Text::SetStrikeThrough(bool strikeThrough, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetStrikeThrough(bool strikeThrough, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -320,7 +325,7 @@ namespace UI
 			}
 		}
 	}
-	void Text::SetUnderline(bool underline, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetUnderline(bool underline, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -333,7 +338,7 @@ namespace UI
 		}
 	}
 
-	void Text::SetLeadingSpacing(float leadingSpacing, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetLeadingSpacing(float leadingSpacing, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -345,7 +350,7 @@ namespace UI
 			}
 		}
 	}
-	void Text::SetTrailingSpacing(float trailingSpacing, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetTrailingSpacing(float trailingSpacing, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -357,7 +362,7 @@ namespace UI
 			}
 		}
 	}
-	void Text::SetMinimumAdvanceWidth(float minimumAdvanceWidth, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetMinimumAdvanceWidth(float minimumAdvanceWidth, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -370,7 +375,7 @@ namespace UI
 		}
 	}
 
-	void Text::SetLineSpacingMethod(DWRITE_LINE_SPACING_METHOD lineSpacingMethod, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetLineSpacingMethod(DWRITE_LINE_SPACING_METHOD lineSpacingMethod, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -383,7 +388,7 @@ namespace UI
 			}
 		}
 	}
-	void Text::SetLineSpacingHeight(float lineSpacingSpacingHeight, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetLineSpacingHeight(float lineSpacingSpacingHeight, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -396,7 +401,7 @@ namespace UI
 			}
 		}
 	}
-	void Text::SetLineSpacingBaseline(float lineSpacingBaseline, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetLineSpacingBaseline(float lineSpacingBaseline, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -409,7 +414,7 @@ namespace UI
 			}
 		}
 	}
-	void Text::SetLineSpacingLeadingBefore(float lineSpacingLeadingBefore, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetLineSpacingLeadingBefore(float lineSpacingLeadingBefore, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)
@@ -422,7 +427,7 @@ namespace UI
 			}
 		}
 	}
-	void Text::SetLineSpacingFontLineGapUsage(DWRITE_FONT_LINE_GAP_USAGE lineSpacingFontLineGapUsage, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL)
+	void Text::SetLineSpacingFontLineGapUsage(DWRITE_FONT_LINE_GAP_USAGE lineSpacingFontLineGapUsage, MouseControlStateSetter mouseControlStateSetter)
 	{
 		// loop over each update index function and check what needs updating
 		for (int iii = 0; iii < 3; ++iii)

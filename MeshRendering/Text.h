@@ -36,30 +36,30 @@ namespace UI
 
 		void SetTextBoxPoint(float x, float y);
 
-		void SetTextColor(					D2D1::ColorF color,										MouseControlStateSetter mouseControlStateSetter);
-		void SetTextAlignment(				DWRITE_TEXT_ALIGNMENT textAlignment,					MouseControlStateSetter mouseControlStateSetter);
-		void SetParagraphAlignment(			DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment,          MouseControlStateSetter mouseControlStateSetter);
+		void SetTextColor(					D2D1::ColorF color,										MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
+		void SetTextAlignment(				DWRITE_TEXT_ALIGNMENT textAlignment,					MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
+		void SetParagraphAlignment(			DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment,          MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
 
-		void SetFontSize(					float fontSize,											MouseControlStateSetter mouseControlStateSetter);
-		void SetFontStretch(				DWRITE_FONT_STRETCH fontStretch,						MouseControlStateSetter mouseControlStateSetter);
-		void SetFontStyle(					DWRITE_FONT_STYLE fontStyle,							MouseControlStateSetter mouseControlStateSetter);
-		void SetFontWeight(					DWRITE_FONT_WEIGHT fontWeight,							MouseControlStateSetter mouseControlStateSetter);
+		void SetFontSize(					float fontSize,											MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
+		void SetFontStretch(				DWRITE_FONT_STRETCH fontStretch,						MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
+		void SetFontStyle(					DWRITE_FONT_STYLE fontStyle,							MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
+		void SetFontWeight(					DWRITE_FONT_WEIGHT fontWeight,							MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
 
-		void SetMaxWidth(					float maxWidth,											MouseControlStateSetter mouseControlStateSetter);
-		void SetMaxHeight(					float maxHeight,										MouseControlStateSetter mouseControlStateSetter);
+		void SetMaxWidth(					float maxWidth,											MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
+		void SetMaxHeight(					float maxHeight,										MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
 
-		void SetStrikeThrough(				bool strikeThrough,										MouseControlStateSetter mouseControlStateSetter);
-		void SetUnderline(					bool underline,											MouseControlStateSetter mouseControlStateSetter);
+		void SetStrikeThrough(				bool strikeThrough,										MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
+		void SetUnderline(					bool underline,											MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
 
-		void SetLeadingSpacing(				float leadingSpacing,									MouseControlStateSetter mouseControlStateSetter);
-		void SetTrailingSpacing(			float trailingSpacing,									MouseControlStateSetter mouseControlStateSetter);
-		void SetMinimumAdvanceWidth(		float minimumAdvanceWidth,								MouseControlStateSetter mouseControlStateSetter);
+		void SetLeadingSpacing(				float leadingSpacing,									MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
+		void SetTrailingSpacing(			float trailingSpacing,									MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
+		void SetMinimumAdvanceWidth(		float minimumAdvanceWidth,								MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
 
-		void SetLineSpacingMethod(			DWRITE_LINE_SPACING_METHOD lineSpacingMethod,			MouseControlStateSetter mouseControlStateSetter);
-		void SetLineSpacingHeight(			float lineSpacingSpacingHeight,							MouseControlStateSetter mouseControlStateSetter);
-		void SetLineSpacingBaseline(		float lineSpacingBaseline,								MouseControlStateSetter mouseControlStateSetter);
-		void SetLineSpacingLeadingBefore(	float lineSpacingLeadingBefore,							MouseControlStateSetter mouseControlStateSetter);
-		void SetLineSpacingFontLineGapUsage(DWRITE_FONT_LINE_GAP_USAGE lineSpacingFontLineGapUsage, MouseControlStateSetter mouseControlStateSetter);
+		void SetLineSpacingMethod(			DWRITE_LINE_SPACING_METHOD lineSpacingMethod,			MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
+		void SetLineSpacingHeight(			float lineSpacingSpacingHeight,							MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
+		void SetLineSpacingBaseline(		float lineSpacingBaseline,								MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
+		void SetLineSpacingLeadingBefore(	float lineSpacingLeadingBefore,							MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
+		void SetLineSpacingFontLineGapUsage(DWRITE_FONT_LINE_GAP_USAGE lineSpacingFontLineGapUsage, MouseControlStateSetter mouseControlStateSetter = MouseControlStateSetter::SET_ALL);
 
 
 		bool UpdateTheDefaultIndex(MouseControlStateSetter mouseControlStateSetter);

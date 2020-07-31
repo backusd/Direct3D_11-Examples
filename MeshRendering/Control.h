@@ -1,7 +1,6 @@
 #pragma once
 
 #include "pch.h"
-#include "AppLayout.h"
 
 using winrt::Windows::Foundation::EventHandler;
 
