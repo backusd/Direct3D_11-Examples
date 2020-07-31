@@ -13,6 +13,11 @@ using winrt::Windows::Storage::Streams::DataReader;
 
 namespace DX
 {
+	inline bool ColorsAreEqual(D2D1::ColorF A, D2D1::ColorF B)
+	{
+		return A.r == B.r && A.g == B.g && A.b == B.b && A.a == B.a;
+	}
+
 	template <typename From, typename To>
 	void As(From const& from, winrt::com_ptr<To>& to)
 	{

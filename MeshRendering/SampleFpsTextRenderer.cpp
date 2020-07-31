@@ -1,4 +1,4 @@
-#include "pch.h"
+ #include "pch.h"
 #include "SampleFpsTextRenderer.h"
 #include "DirectXHelper.h"
 

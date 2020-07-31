@@ -109,6 +109,7 @@
   <ItemGroup>
     <ClInclude Include="AppLayout.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="Enums.h" />
     <ClInclude Include="RectangularControl.h" />
     <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="DirectXHelper.h" />
@@ -120,6 +121,7 @@
     <ClInclude Include="SampleFpsTextRenderer.h" />
     <ClInclude Include="ShaderStructures.h" />
     <ClInclude Include="StepTimer.h" />
+    <ClInclude Include="Text.h" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -149,6 +151,7 @@
     </ClCompile>
     <ClCompile Include="Sample3DSceneRenderer.cpp" />
     <ClCompile Include="SampleFpsTextRenderer.cpp" />
+    <ClCompile Include="Text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

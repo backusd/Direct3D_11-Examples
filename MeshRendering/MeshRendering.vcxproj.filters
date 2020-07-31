@@ -28,6 +28,9 @@
     <ClCompile Include="Button.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="Text.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -63,6 +66,12 @@
       <Filter>UI</Filter>
     </ClInclude>
     <ClInclude Include="Button.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Enums.h">
       <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
